@@ -2,13 +2,12 @@ local HttpService = game:GetService("HttpService")
 local TeleportService = game:GetService("TeleportService")
 local Players = game:GetService("Players")
 local StarterGui = game:GetService("StarterGui")
-local UserInputService = game:GetService("UserInputService")
 
-local PLACE_ID = 109983668079237 -- Coloque aqui o PlaceId do jogo Roblox que deseja entrar
+local PLACE_ID = 109983668079237 -- PlaceId alvo
 local API_URL = "http://127.0.0.1:8765"
 
 local LocalPlayer = Players.LocalPlayer
-local autoJoinEnabled = false
+local autoJoinEnabled = true -- já inicia ativo
 local lastJobId = nil
 
 local function notify(title, text)
@@ -52,16 +51,8 @@ local function tryTeleport(jobId)
     end
 end
 
-UserInputService.InputBegan:Connect(function(input, gameProcessed)
-    if gameProcessed then return end
-    if input.KeyCode == Enum.KeyCode.J then
-        autoJoinEnabled = not autoJoinEnabled
-        notify("Auto Join", autoJoinEnabled and "Ativado. Aguardando JobId..." or "Desativado.")
-        print("[AutoJoin] Auto join "..(autoJoinEnabled and "ativado" or "desativado"))
-    end
-end)
+notify("Auto Join", "Ativado automaticamente. Aguardando JobId...")
 
--- Loop para consultar API e tentar teleportar
 task.spawn(function()
     while true do
         if autoJoinEnabled then
@@ -71,6 +62,6 @@ task.spawn(function()
                 tryTeleport(jobId)
             end
         end
-        task.wait(1) -- 1 segundo de delay para não sobrecarregar a API
+        task.wait(1)
     end
 end)
